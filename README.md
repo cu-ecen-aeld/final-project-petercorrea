@@ -1,7 +1,10 @@
 # Automated Vertical Garden
 
 ## ECEA 5307 Final Project
-This is the final project repository for Peter Correa.
+This is the final project repository for Peter Correa. 
+
+## Code
+This repo contains the yocto image and tooling. The application source code can be found [here.](https://github.com/petercorrea/final-project-assignment-petercorrea)
 
 ## Team Member
 Pedro (Peter) Correa - Project will be completed individually.
