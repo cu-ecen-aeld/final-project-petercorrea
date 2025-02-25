@@ -1,0 +1,44 @@
+# # # CONFIG # # # 
+MACHINE ?= "raspberrypi3-64"
+DL_DIR ?= "${HOME}/src/yocto-downloads"
+SSTATE_DIR ?= "${HOME}/src/yocto-sstate-cache"
+SSTATE_MIRRORS ?= "file://.* http://sstate.yoctoproject.org/3.1.15/PATH;downloadfilename=PATH \n "
+CORE_IMAGE_EXTRA_INSTALL:append = " nano"
+IMAGE_INSTALL:append = " openssh-sshd apt opkg curl git python3 python3-pip vim rsync sudo make gcc g++ binutils libtool autoconf automake pkgconfig gdb"
+TMPDIR = "/home/yocto/build/tmp"
+IMAGE_ROOTFS_EXTRA_SPACE = "4096"
+BB_NUMBER_THREADS = "8"
+PARALLEL_MAKE = "-j 8"
+
+# https://meta-raspberrypi.readthedocs.io/en/latest/ipcompliance.html
+LICENSE_FLAGS_ACCEPTED += "commercial"
+LICENSE_FLAGS_ACCEPTED += "synaptics-killswitch"
+
+# # # SETUP USERS # # # 
+# Instructs BitBake to include the 'extrausers' class, which allows for the creation and management of additional users in the image.
+INHERIT += "extrausers"
+
+# Sets the hashed password for the 'root' user in the image
+# password was used with openssl passwd -1 "password"
+# https://stackoverflow.com/questions/32274163/how-to-set-root-password-on-yocto-poky-image
+EXTRA_USERS_PARAMS = "usermod -p '\$1\$SEMOUzuM\$tg/HWPxYAc8hv9lmdfcgA/' root; "
+# Adds a new user 'pi' with the specified password
+EXTRA_USERS_PARAMS += "useradd -p '\$1\$SEMOUzuM\$tg/HWPxYAc8hv9lmdfcgA/' pi; "
+
+# # # SETUP HOSTNAME # # #
+# EXTRA_IMAGE_FEATURES += "change-hostname"
+# HOSTNAME_PN-base-files = "my-raspberrypi"
+
+# # # SETUP SUDO # # # 
+# Adds 'pi' to the 'adm' and 'sudo' groups, granting administrative privileges.
+# EXTRA_USERS_PARAMS += "usermod -a -G adm,sudo pi; "
+# Configures 'pi' to use sudo without a password prompt for any command.
+# EXTRA_USERS_PARAMS += "echo 'pi ALL=(ALL) NOPASSWD: ALL' >> ${IMAGE_ROOTFS}/etc/sudoers; "
+
+# # # # SETUP SSH # # # 
+# # Adds a public SSH key to the 'authorized_keys' file for 'yocto', allowing key-based SSH authentication.
+# EXTRA_USERS_PARAMS += "mkdir -p ${IMAGE_ROOTFS}/home/pi/.ssh; "
+# EXTRA_USERS_PARAMS += "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDbIiipNXbfByyOtK0JpWzYhX/IWkYjalrC/PXp1iklOcPE1lpypZLWonRB2ra00EOUNT+lrbu77PXx3ja6cP4OhX7vDZwsqSA3NQJgaYEb9y/BogI5CjQIf4pn6MBCrNJsWnnd66nKw/54KMNPrWb4rRQjNk4LQve7QTVNpkqL4vQ7mPCHk16mUBWur17UmfhfTUTgbjqqKjFB+46SwsNWDlOx6OpeLEZz8hF7g+HeKa5f3cnt+UXt5+eWJsh4R98+pwfIAQZh1s3aThgu4oE3Y4Nh7OqKW5guE3JYzRlh43iFsapOAz703yGlZY9mx1IdyX37EqwdSPVwIi8GY+rVEpplmm1uVCwabebOIgNqtb/h/t3WhU43dEDjb6slGX8peVlDNyJOHO9lJMUS+JOtcZ522R55RHOO05sOOWVKoXLTtcCxPPav2jq69IIhTVrXJST3p8W5XXpHsKrmm0Uf5U0EQMCSf1+D0M8L0Qa+WyMyF7DUKjjjwXRtNRIFOY0= peter@Pedros-MBP.home' > ${IMAGE_ROOTFS}/home/pi/.ssh/authorized_keys; "
+# EXTRA_USERS_PARAMS += "chown -R pi:pi ${IMAGE_ROOTFS}/home/pi/.ssh; "
+# EXTRA_USERS_PARAMS += "chmod 700 ${IMAGE_ROOTFS}/home/pi/.ssh; "
+# EXTRA_USERS_PARAMS += "chmod 600 ${IMAGE_ROOTFS}/home/pi/.ssh/authorized_keys; "

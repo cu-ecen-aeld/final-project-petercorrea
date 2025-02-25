@@ -1,0 +1,7 @@
+meta-*
+poky
+yocto-downloads
+yocto-sstate-cache
+.bash_history
+.DS_Store
+TODO.md

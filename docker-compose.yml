@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  yocto:
+    image: yocto-build-env
+    container_name: yocto-build-env
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_UID: ${HOST_UID}
+        USER_GID: ${HOST_GID}
+        USERNAME: yocto
+    volumes:
+      # this will be case-insensitive
+      - .:/home/yocto/src
+      # this should be case-sensitive
+      - /Volumes/yocto:/mnt/yocto
+    command: /bin/bash
+    tty: true
+    privileged: true
